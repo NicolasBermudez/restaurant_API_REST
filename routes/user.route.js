@@ -1,7 +1,12 @@
 const { Router } = require('express')
-const { check } = require('express-validator')
+
 const { createUser, loginUser } = require('../controllers/auth.controller')
-const { updateUser, deleteUser } = require('../controllers/user.controller')
+const {
+  updateUser,
+  deleteUser,
+  totalUserOrder,
+  userOrder,
+} = require('../controllers/user.controller')
 const {
   protect,
   protectAccountOwer,
@@ -10,12 +15,16 @@ const {
   validIfExistUserEmail,
   validIfExistUser,
 } = require('../middlewares/user.middleware')
+const {
+  signupValidation,
+  loginValidation,
+} = require('../middlewares/valitation.middleware')
 
 const router = Router()
 
-router.post('/signup', validIfExistUserEmail, createUser)
+router.post('/signup', signupValidation, validIfExistUserEmail, createUser)
 
-router.post('/login', loginUser)
+router.post('/login', loginValidation, loginUser)
 
 router.use(protect)
 
@@ -23,8 +32,8 @@ router.patch('/:id', validIfExistUser, protectAccountOwer, updateUser)
 
 router.delete('/:id', validIfExistUser, protectAccountOwer, deleteUser)
 
-router.get('/orders')
+router.get('/orders', totalUserOrder)
 
-router.get('/orders/:id')
+router.get('/orders/:id', userOrder)
 
 module.exports = { usersRouter: router }

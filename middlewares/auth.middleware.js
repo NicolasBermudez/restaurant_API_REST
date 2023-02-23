@@ -1,8 +1,10 @@
-const AppError = require('../utils/appError')
 const catchAsync = require('../utils/catchAsync')
+const AppError = require('../utils/appError')
+
 const jwt = require('jsonwebtoken')
-const User = require('../models/users.model')
 const { promisify } = require('util')
+
+const User = require('../models/users.model')
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token
@@ -37,7 +39,6 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError('The owner of this token it not longer available', 401)
     )
   }
-
   req.sessionUser = user
   next()
 })

@@ -1,6 +1,7 @@
-const Meals = require('../models/meals.model')
-const AppError = require('../utils/appError')
 const catchAsync = require('../utils/catchAsync')
+const AppError = require('../utils/appError')
+
+const Meals = require('../models/meals.model')
 
 exports.validExistMeals = catchAsync(async (req, res, next) => {
   const { id } = req.params

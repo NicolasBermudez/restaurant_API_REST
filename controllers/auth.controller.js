@@ -1,8 +1,10 @@
 const catchAsync = require('../utils/catchAsync')
+const AppError = require('../utils/appError')
+
+const User = require('../models/users.model')
+
 const bcrypt = require('bcryptjs')
 const generateJWT = require('../utils/jwt')
-const User = require('../models/users.model')
-const AppError = require('../utils/appError')
 
 exports.createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body

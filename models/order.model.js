@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize')
 const { db } = require('../dataBase/db')
+const { DataTypes } = require('sequelize')
 
 const Orders = db.define('orders', {
   id: {
@@ -20,7 +20,7 @@ const Orders = db.define('orders', {
   },
 
   totalPrice: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
 

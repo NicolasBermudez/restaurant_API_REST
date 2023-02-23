@@ -1,4 +1,5 @@
 const { Router } = require('express')
+
 const {
   newOrder,
   allOrderUser,
@@ -7,12 +8,15 @@ const {
 } = require('../controllers/orders.controllers')
 const { protect } = require('../middlewares/auth.middleware')
 const { validExistMeals } = require('../middlewares/meals.middlewares')
+const {
+  createOrderValidation,
+} = require('../middlewares/valitation.middleware')
 
 const router = Router()
 
 router.use(protect)
 
-router.post('/', validExistMeals, newOrder)
+router.post('/', createOrderValidation, validExistMeals, newOrder)
 
 router.get('/me', allOrderUser)
 

@@ -1,15 +1,18 @@
-const Orders = require('../models/order.model')
 const catchAsync = require('../utils/catchAsync')
 
-exports.newOrder = catchAsync(async (req, res, next) => {
-  const { quantity, userId } = req.body
+const Meals = require('../models/meals.model')
+const Orders = require('../models/order.model')
+const Restaurants = require('../models/restaurants.model')
 
-  const { meals } = req
+exports.newOrder = catchAsync(async (req, res, next) => {
+  const { quantity } = req.body
+
+  const { meals, sessionUser } = req
 
   const order = await Orders.create({
     quantity,
     mealId: meals.id,
-    userId,
+    userId: sessionUser.id,
     totalPrice: meals.price * quantity,
   })
 
@@ -20,7 +23,33 @@ exports.newOrder = catchAsync(async (req, res, next) => {
   })
 })
 
-exports.allOrderUser = catchAsync(async (req, res, next) => {})
+exports.allOrderUser = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req
+
+  const allOrder = await Orders.findAll({
+    where: {
+      userId: sessionUser.id,
+    },
+    include: [
+      {
+        model: Meals,
+        attributes: { exclude: ['createdAt', 'updatedAt', 'status'] },
+        include: [
+          {
+            model: Restaurants,
+            attributes: { exclude: ['createdAt', 'updatedAt', 'status'] },
+          },
+        ],
+      },
+    ],
+  })
+
+  res.status(200).json({
+    status: 'success',
+    message: 'all Order find successfully',
+    allOrder,
+  })
+})
 
 exports.completedOrder = catchAsync(async (req, res, next) => {
   const { id } = req.params

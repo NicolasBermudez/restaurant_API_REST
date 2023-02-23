@@ -1,20 +1,23 @@
 // en scripts debug : ndb app.js
+const express = require('express')
+const cors = require('cors')
+const morgan = require('morgan')
+
+const rateLimit = require('express-rate-limit')
 const helmet = require('helmet')
 const xss = require('xss-clean')
 const hpp = require('hpp')
-const rateLimit = require('express-rate-limit')
-const express = require('express')
-const cors = require('cors')
-const globalErrorHandler = require('../controllers/error.controller')
+
 const AppError = require('../utils/appError')
+const globalErrorHandler = require('../controllers/error.controller')
+
 const { db } = require('../dataBase/db')
+const initModel = require('./init.model')
+
 const { usersRouter } = require('../routes/user.route')
 const { restaurantsRouter } = require('../routes/restaurants.route')
-const morgan = require('morgan')
 const { orderRouter } = require('../routes/orders.route')
 const { mealsRouter } = require('../routes/meals.route')
-
-// creamos una clase
 
 class Server {
   constructor() {
@@ -23,7 +26,7 @@ class Server {
     this.port = process.env.PORT || 4000
 
     this.limiter = rateLimit({
-      max: 100,
+      max: 1000,
       window: 60 * 60 * 1000,
       message: 'too many request from IP, please try again in an hour!',
     })
@@ -61,8 +64,6 @@ class Server {
   }
 
   routes() {
-    this.app.use
-
     this.app.use(this.paths.user, usersRouter)
 
     this.app.use(this.paths.restaurants, restaurantsRouter)
@@ -84,6 +85,8 @@ class Server {
     db.authenticate()
       .then(() => console.log('Database authenticated'))
       .catch(error => console.log(error))
+
+    initModel()
 
     db.sync()
       .then(() => console.log('Database synced'))

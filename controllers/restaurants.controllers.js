@@ -1,5 +1,7 @@
-const Restaurants = require('../models/restaurants.model')
 const catchAsync = require('../utils/catchAsync')
+
+const Restaurants = require('../models/restaurants.model')
+const Reviews = require('../models/reviews.model')
 
 exports.createRestaurant = catchAsync(async (req, res, next) => {
   const { name, address, rating } = req.body
@@ -83,5 +85,74 @@ exports.deleteRestaurant = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     message: 'Delete restaurant successfully',
+  })
+})
+
+exports.newReview = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req
+
+  const { id } = req.params
+
+  const { comment, rating } = req.body
+
+  const review = await Reviews.create({
+    restaurantId: id,
+    userId: sessionUser.id,
+    comment,
+    rating,
+  })
+
+  res.status(201).json({
+    status: 'success',
+    message: 'review created successfully',
+    review,
+  })
+})
+
+exports.updateReview = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req
+
+  const { restaurantId, id } = req.params
+
+  const { comment, rating } = req.body
+
+  const review = await Reviews.findOne({
+    where: {
+      id,
+      restaurantId,
+      userId: sessionUser.id,
+    },
+  })
+
+  const updateOneReview = await review.update({
+    comment,
+    rating,
+  })
+
+  res.status(200).json({
+    status: 'success',
+    message: 'the review update successfully',
+    updateOneReview,
+  })
+})
+
+exports.deleteReview = catchAsync(async (req, res, next) => {
+  const { sessionUser } = req
+
+  const { restaurantId, id } = req.params
+
+  const review = await Reviews.findOne({
+    where: {
+      id,
+      restaurantId,
+      userId: sessionUser.id,
+    },
+  })
+
+  await review.update({ status: 'deleted' })
+
+  res.status(200).json({
+    status: 'success',
+    message: 'the review deleted successfully',
   })
 })

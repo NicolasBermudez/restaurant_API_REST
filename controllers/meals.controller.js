@@ -1,5 +1,6 @@
-const Meals = require('../models/meals.model')
 const catchAsync = require('../utils/catchAsync')
+
+const Meals = require('../models/meals.model')
 
 exports.newMeals = catchAsync(async (req, res, next) => {
   const { restaurant } = req
